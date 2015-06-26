@@ -1540,7 +1540,7 @@ static void rtk_write_btmac2file(char bt_addr[6])
 {
 	int fd;
 	mkdir(BT_ADDR_DIR, 0777);
-	fd = open(BT_ADDR_FILE, O_CREAT|O_RDWR|O_TRUNC);
+	fd = open(BT_ADDR_FILE, O_CREAT|O_RDWR|O_TRUNC, 0666);
 
 	if(fd > 0) {
 		chmod(BT_ADDR_FILE, 0666);
