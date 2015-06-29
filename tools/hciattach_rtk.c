@@ -105,8 +105,8 @@ const RT_U8 Extension_Section_SIGNATURE[4] = {0x51,0x04,0xFD,0x77};
 
 #define HCI_CMD_READ_BD_ADDR                0x1009
 #define HCI_VENDOR_CHANGE_BDRATE            0xfc17
-#define HCI_VENDOR_READ_RTK_ROM_VERISION    0xfc6d
-#define HCI_VENDOR_READ_LMP_VERISION        0x1001
+#define HCI_VENDOR_READ_RTK_ROM_VERSION     0xfc6d
+#define HCI_VENDOR_READ_LMP_VERSION         0x1001
 
 #define ROM_LMP_NONE            0x0000
 #define ROM_LMP_8723a           0x1200
@@ -810,7 +810,7 @@ static void hci_event_cmd_complete(struct sk_buff* skb)
 		}
 		break;
 
-	case HCI_VENDOR_READ_LMP_VERISION:
+	case HCI_VENDOR_READ_LMP_VERSION:
 		rtk_hw_cfg.hci_version_cmd_state = event_received;
 		status = skb->data[0];
 		RS_DBG("Read RTK LMP version with Status:%x", status);
@@ -824,7 +824,7 @@ static void hci_event_cmd_complete(struct sk_buff* skb)
 		rtk_hw_cfg.host_last_cmd = NULL;
 		break;
 
-	case HCI_VENDOR_READ_RTK_ROM_VERISION:
+	case HCI_VENDOR_READ_RTK_ROM_VERSION:
 		rtk_hw_cfg.rom_version_cmd_state = event_received;
 		status = skb->data[0];
 		RS_DBG("Read RTK rom version with Status:%x", status);
@@ -2047,7 +2047,7 @@ static void rtk_get_eversion_timeout(int sig)
 {
     static int retries = 0;
 
-	RS_DBG("RTK get HCI_VENDOR_READ_RTK_ROM_VERISION_Command\n");
+	RS_DBG("RTK get HCI_VENDOR_READ_RTK_ROM_VERSION_Command\n");
 	if (retries < rtk_hw_cfg.h5_max_retries) {
 		RS_DBG("rtk get eversion timerout, retry:%d\n", retries);
 		if (rtk_hw_cfg.host_last_cmd) {
@@ -2084,7 +2084,7 @@ static void rtk_get_eversion(int dd)
 
 	write(dd, nskb->data, nskb->data_len);
 	rtk_hw_cfg.rom_version_cmd_state = cmd_has_sent;
-	RS_DBG("RTK send HCI_VENDOR_READ_RTK_ROM_VERISION_Command\n");
+	RS_DBG("RTK send HCI_VENDOR_READ_RTK_ROM_VERSION_Command\n");
 
 	alarm(0);
 	memset(&sa, 0, sizeof(sa));
@@ -2142,7 +2142,7 @@ static void rtk_get_lmp_version(int dd)
 
 	write(dd, nskb->data, nskb->data_len);
 	rtk_hw_cfg.hci_version_cmd_state = cmd_has_sent;
-	RS_DBG("RTK send HCI_VENDOR_READ_RTK_ROM_VERISION_Command\n");
+	RS_DBG("RTK send HCI_VENDOR_READ_RTK_ROM_VERSION_Command\n");
 
 	alarm(0);
 	memset(&sa, 0, sizeof(sa));
