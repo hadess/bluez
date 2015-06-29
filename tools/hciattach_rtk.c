@@ -44,6 +44,7 @@
 #include <endian.h>
 #include <byteswap.h>
 #include <netinet/in.h>
+#include <bluetooth/bluetooth.h>
 
 #include "hciattach.h"
 
@@ -421,8 +422,8 @@ static void skb_trim(struct sk_buff *skb, unsigned int len)
 */
 static RT_U8 * skb_pull(struct sk_buff * skb, RT_U32 len)
 {
-    skb->data_len -= len;
     unsigned char *buf;
+    skb->data_len -= len;
     if (!(buf = malloc(skb->data_len))) {
         RS_ERR("Unable to allocate file buffer");
         exit(1);
@@ -779,7 +780,6 @@ static void rtk_send_pure_ack_down(int fd)
 */
 static void hci_event_cmd_complete(struct sk_buff* skb)
 {
-	struct hci_event_hdr *hdr = (struct hci_event_hdr *) skb->data;
 	struct hci_ev_cmd_complete* ev = NULL;
 	RT_U16 opcode = 0;
 	RT_U8 status = 0;
@@ -807,7 +807,8 @@ static void hci_event_cmd_complete(struct sk_buff* skb)
 		status = skb->data[0];
 		RS_DBG("Read BD Address with Status:%x", status);
 		if (!status) {
-			RS_DBG("BD Address: %8x%8x", *(int*)&skb->data[1], *(int*)&skb->data[5]);
+			int *data = (int *) skb->data + 1;
+			RS_DBG("BD Address: %8x%8x", *data, *data + 4);
 		}
 		break;
 
@@ -855,7 +856,6 @@ static void hci_event_cmd_complete(struct sk_buff* skb)
 */
 static void hci_recv_frame(struct sk_buff *skb)
 {
-	int len;
 	unsigned char 	h5sync[2]     = {0x01, 0x7E},
 			        h5syncresp[2] = {0x02, 0x7D},
 			        h5_sync_resp_pkt[0x8] = {0xc0, 0x00, 0x2F, 0x00, 0xD0, 0x02, 0x7D, 0xc0},
@@ -867,7 +867,7 @@ static void hci_recv_frame(struct sk_buff *skb)
     if(rtk_hw_cfg.link_estab_state == H5_SYNC) {
 		if (!memcmp(skb->data, h5sync, 2)) {
 			RS_DBG("Get SYNC Pkt\n");
-			len = write(rtk_hw_cfg.serial_fd, &h5_sync_resp_pkt,0x8);
+			write(rtk_hw_cfg.serial_fd, &h5_sync_resp_pkt,0x8);
 		}
 		else if (!memcmp(skb->data, h5syncresp, 2)) {
 			RS_DBG("Get SYNC Resp Pkt\n");
@@ -876,11 +876,11 @@ static void hci_recv_frame(struct sk_buff *skb)
 		skb_free(skb);
     } else if(rtk_hw_cfg.link_estab_state == H5_CONFIG) {
 		if (!memcmp(skb->data, h5sync, 0x2)) {
-			len = write(rtk_hw_cfg.serial_fd, &h5_sync_resp_pkt, 0x8);
+			write(rtk_hw_cfg.serial_fd, &h5_sync_resp_pkt, 0x8);
 			RS_DBG("Get SYNC pkt-active mode\n");
 		}
 		else if (!memcmp(skb->data, h5conf, 0x2)) {
-			len = write(rtk_hw_cfg.serial_fd, &h5_conf_resp_pkt_to_Ctrl, 0x8);
+			write(rtk_hw_cfg.serial_fd, &h5_conf_resp_pkt_to_Ctrl, 0x8);
 			RS_DBG("Get CONFG pkt-active mode\n");
 		}
 		else if (!memcmp(skb->data, h5confresp,  0x2)) {
@@ -1140,9 +1140,9 @@ static void h5_tsync_sig_alarm(int sig)
 	struct itimerval value;
 
 	if (retries < rtk_hw_cfg.h5_max_retries) {
-		retries++;
 		struct sk_buff *nskb = h5_prepare_pkt(&rtk_hw_cfg, h5sync, sizeof(h5sync), H5_LINK_CTL_PKT);
 		int len = write(rtk_hw_cfg.serial_fd, nskb->data, nskb->data_len);
+		retries++;
 		RS_DBG("3-wire sync pattern resend : %d, len: %d\n", retries, len);
 
 		skb_free(nskb);
@@ -1177,9 +1177,9 @@ static void h5_tconf_sig_alarm(int sig)
 	struct itimerval value;
 
 	if (retries < rtk_hw_cfg.h5_max_retries) {
-		retries++;
 		struct sk_buff *nskb = h5_prepare_pkt(&rtk_hw_cfg, h5conf, 3, H5_LINK_CTL_PKT);
 		int len = write(rtk_hw_cfg.serial_fd,  nskb->data, nskb->data_len);
+		retries++;
 		RS_DBG("3-wire config pattern resend : %d , len: %d", retries, len);
 		skb_free(nskb);
 
@@ -1240,7 +1240,7 @@ static void h5_tpatch_sig_alarm(int sig)
 	if (retries < rtk_hw_cfg.h5_max_retries) {
 		RS_ERR("patch timerout, retry:\n");
 		if (rtk_hw_cfg.host_last_cmd) {
-			int len = write(rtk_hw_cfg.serial_fd, rtk_hw_cfg.host_last_cmd->data, rtk_hw_cfg.host_last_cmd->data_len);
+			write(rtk_hw_cfg.serial_fd, rtk_hw_cfg.host_last_cmd->data, rtk_hw_cfg.host_last_cmd->data_len);
 			RS_DBG("3-wire download patch re send:%d", retries );
 		}
 		retries++;
@@ -1268,19 +1268,21 @@ static int hci_download_patch(int dd, int index, uint8_t *data, int len,struct t
 	unsigned char bytes[READ_DATA_SIZE];
 	int retlen;
 	struct sigaction sa;
+	download_vendor_patch_cp cp;
+	int nValue;
+	struct sk_buff *nskb;
 
 	sa.sa_handler = h5_tpatch_sig_alarm;
 	sigaction(SIGALRM, &sa, NULL);
 	alarm(2);
 
-	download_vendor_patch_cp cp;
 	memset(&cp, 0, sizeof(cp));
 	cp.index = index;
 	if (data != NULL) {
 		memcpy(cp.data, data, len);
 	}
 
-	int nValue = rtk_hw_cfg.total_num|0x80;
+	nValue = rtk_hw_cfg.total_num|0x80;
 	if (index == nValue) {
 		rtk_hw_cfg.tx_index = rtk_hw_cfg.total_num;
 	} else {
@@ -1289,7 +1291,7 @@ static int hci_download_patch(int dd, int index, uint8_t *data, int len,struct t
 	hcipatch[2] = len+1;
 	memcpy(hcipatch+3, &cp, len+1);
 
-	struct sk_buff *nskb = h5_prepare_pkt(&rtk_hw_cfg, hcipatch, len+4, HCI_COMMAND_PKT); //data:len+head:4
+	nskb = h5_prepare_pkt(&rtk_hw_cfg, hcipatch, len+4, HCI_COMMAND_PKT); //data:len+head:4
 
 	if (rtk_hw_cfg.host_last_cmd) {
 		skb_free(rtk_hw_cfg.host_last_cmd);
@@ -1331,7 +1333,7 @@ static int hci_download_patch_h4(int dd, int index, uint8_t *data, int len)
     uint16_t readbytes = 0;
 	int cur_index = index;
 	int ret_Index = -1;
-	uint16_t res = 0;
+	int res = 0;
 	int i = 0;
 	size_t total_len;
 	uint16_t w_len;
@@ -1414,7 +1416,7 @@ static int rtk_vendor_change_speed_h4(int fd, RT_U32 baudrate)
 	RS_DBG("H4 Change uart Baudrate after write ");
     res = read(fd, bytes, sizeof(bytes));
 
-    if((0x04 == bytes[0]) && (0x17 == bytes[4]) && (0xfc == bytes[5]))
+    if(res == 4 && (0x04 == bytes[0]) && (0x17 == bytes[4]) && (0xfc == bytes[5]))
     {
 	    RS_DBG("H4 change uart speed success, receving status:%x", bytes[6]);
 	    if (bytes[6] == 0)
@@ -1430,10 +1432,8 @@ static int rtk_vendor_change_speed_h4(int fd, RT_U32 baudrate)
 static const char *get_firmware_name()
 {
 	static char firmware_file_name[PATH_MAX] = {0};
-	int ret = 0;
-	struct stat st;
 
-	ret = sprintf(firmware_file_name, FIRMWARE_DIRECTORY"rtlbt_fw");
+	sprintf(firmware_file_name, FIRMWARE_DIRECTORY"rtlbt_fw");
 
 	return firmware_file_name;
 }
@@ -1451,7 +1451,7 @@ static const char *get_firmware_name()
 *
 */
 
-RT_U32 rtk_parse_config_file(RT_U8* config_buf, size_t filelen, char bt_addr[6])
+static RT_U32 rtk_parse_config_file(RT_U8* config_buf, size_t filelen, char bt_addr[6])
 {
 	struct rtk_bt_vendor_config* config = (struct rtk_bt_vendor_config*) config_buf;
 	RT_U16 config_len = 0, temp = 0;
@@ -1565,19 +1565,18 @@ static void rtk_write_btmac2file(char bt_addr[6])
 * @param config_baud_rate the baudrate set in the config file
 * @return file_len the length of config file
 */
-int rtk_get_bt_config(unsigned char** config_buf, RT_U32* config_baud_rate)
+static int rtk_get_bt_config(unsigned char** config_buf, RT_U32* config_baud_rate)
 {
 	char bt_config_file_name[PATH_MAX] = {0};
-	RT_U8* bt_addr_temp = NULL;
 	char bt_addr[6]={0x00, 0xe0, 0x4c, 0x88, 0x88, 0x88};
 	struct stat st;
 	size_t filelen;
 	int fd;
-	FILE* file = NULL;
-	int ret = 0;
-	int i = 0;
 
 #ifdef USE_CUSTUMER_ADDRESS
+	int i = 0;
+	FILE* file = NULL;
+
 	sprintf(bt_config_file_name, BT_ADDR_FILE);
 	if (stat(bt_config_file_name, &st) < 0) {
 		RS_ERR("can't access bt bt_mac_addr file:%s, try use ramdom BT Addr\n", bt_config_file_name);
@@ -1605,10 +1604,11 @@ int rtk_get_bt_config(unsigned char** config_buf, RT_U32* config_baud_rate)
 
 		fclose(file);
 	}
-#endif
 
 GET_CONFIG:
-	ret = sprintf(bt_config_file_name, BT_CONFIG_DIRECTORY"rtlbt_config"); 
+#endif
+
+	sprintf(bt_config_file_name, BT_CONFIG_DIRECTORY"rtlbt_config"); 
 	if (stat(bt_config_file_name, &st) < 0) {
 		RS_ERR("can't access bt config file:%s, errno:%d\n", bt_config_file_name, errno);
 		return -1;
@@ -1653,7 +1653,7 @@ GET_CONFIG:
 * @param baudrate the speed want to change
 *
 */
-int rtk_vendor_change_speed_h5(int fd, RT_U32 baudrate)
+static int rtk_vendor_change_speed_h5(int fd, RT_U32 baudrate)
 {
 	struct sk_buff* cmd_change_bdrate = NULL;
 	unsigned char cmd[7] = {0};
@@ -1712,7 +1712,7 @@ int rtk_vendor_change_speed_h5(int fd, RT_U32 baudrate)
 * @param ti termios struct
 *
 */
-int rtk_init_h5(int fd, struct termios *ti)
+static int rtk_init_h5(int fd, struct termios *ti)
 {
 	unsigned char bytes[READ_DATA_SIZE];
 	struct sigaction sa;
@@ -1811,6 +1811,7 @@ static int rtk_download_fw_config(int fd, RT_U8* buf, size_t filesize, int is_se
 	uint8_t iTotalIndex = 0;
 	uint8_t iCmdSentNum = 0;
 	unsigned char *bufpatch;
+	int i;
 
 	iEndIndex = (uint8_t)((filesize-1)/PATCH_DATA_FIELD_MAX_SIZE);
 	iLastPacketLen = (filesize)%PATCH_DATA_FIELD_MAX_SIZE;
@@ -1833,7 +1834,6 @@ static int rtk_download_fw_config(int fd, RT_U8* buf, size_t filesize, int is_se
 
 	bufpatch = buf;
 
-	int i;
 	for (i=0; i<=iTotalIndex; i++) {
 		if (iCurIndex < iEndIndex) {
 			iCurIndex = iCurIndex&0x7F;
@@ -1893,7 +1893,7 @@ static int rtk_download_fw_config(int fd, RT_U8* buf, size_t filesize, int is_se
 * @return length of *fw_buf.
 *
 */
-int rtk_get_bt_firmware(RT_U8** fw_buf)
+static int rtk_get_bt_firmware(RT_U8** fw_buf)
 {
 	const char *filename;
 	struct stat st;
@@ -1992,9 +1992,10 @@ baudrate_ex baudrates[] =
 */
 static void rtk_speed_to_uart_speed(RT_U32 rtk_speed, RT_U32* uart_speed)
 {
+	unsigned int i;
+
 	*uart_speed = 115200;
 
-	unsigned int i;
 	for (i = 0; i < sizeof(baudrates)/sizeof(baudrate_ex); i++)
 	{
 		if (baudrates[i].rtk_speed == rtk_speed){
@@ -2029,9 +2030,10 @@ static void rtk_speed_to_uart_speed(RT_U32 rtk_speed, RT_U32* uart_speed)
 */
 static inline void uart_speed_to_rtk_speed(int uart_speed, RT_U32* rtk_speed)
 {
+	unsigned int i;
+
     *rtk_speed = 0x701D;
 
-	unsigned int i;
 	for (i=0; i< sizeof(baudrates)/sizeof(baudrate_ex); i++)
 	{
 	    if (baudrates[i].uart_speed == uart_speed){
@@ -2046,13 +2048,12 @@ static inline void uart_speed_to_rtk_speed(int uart_speed, RT_U32* rtk_speed)
 static void rtk_get_eversion_timeout(int sig)
 {
     static int retries = 0;
-    int len = 0;
 
 	RS_DBG("RTK get HCI_VENDOR_READ_RTK_ROM_VERISION_Command\n");
 	if (retries < rtk_hw_cfg.h5_max_retries) {
 		RS_DBG("rtk get eversion timerout, retry:%d\n", retries);
 		if (rtk_hw_cfg.host_last_cmd) {
-			len = write(rtk_hw_cfg.serial_fd, 
+			write(rtk_hw_cfg.serial_fd, 
                 rtk_hw_cfg.host_last_cmd->data, rtk_hw_cfg.host_last_cmd->data_len);
 		}
 		retries++;
@@ -2068,7 +2069,7 @@ static void rtk_get_eversion_timeout(int sig)
 * Send vendor cmd to get eversion: 0xfc6d
 * If Rom code does not support this cmd, use default.
 */
-void rtk_get_eversion(int dd)
+static void rtk_get_eversion(int dd)
 {
     unsigned char bytes[READ_DATA_SIZE];
 	int retlen;
@@ -2114,7 +2115,7 @@ static void rtk_get_lmp_version_timeout(int sig)
 		RS_DBG("rtk get lmp version timeout, retry: %d\n", retries);
 		if (rtk_hw_cfg.host_last_cmd)
 		{
-			int len = write(rtk_hw_cfg.serial_fd,
+			write(rtk_hw_cfg.serial_fd,
                             rtk_hw_cfg.host_last_cmd->data, rtk_hw_cfg.host_last_cmd->data_len);
 		}
 		retries++;
@@ -2126,7 +2127,7 @@ static void rtk_get_lmp_version_timeout(int sig)
 	exit(1);
 }
 
-void rtk_get_lmp_version(int dd)
+static void rtk_get_lmp_version(int dd)
 {
     unsigned char bytes[READ_DATA_SIZE];
 	int retlen;
@@ -2164,7 +2165,7 @@ void rtk_get_lmp_version(int dd)
     return;
 }
 
-uint8_t rtk_get_fw_project_id(uint8_t *p_buf)
+static uint8_t rtk_get_fw_project_id(uint8_t *p_buf)
 {
     uint8_t opcode;
     uint8_t len;
@@ -2192,13 +2193,11 @@ uint8_t rtk_get_fw_project_id(uint8_t *p_buf)
     return data;
 }
 
-struct rtk_epatch_entry *rtk_get_patch_entry(void)
+static struct rtk_epatch_entry *rtk_get_patch_entry(void)
 {
     uint16_t i;
     struct rtk_epatch *patch;
     struct rtk_epatch_entry *entry;
-    uint8_t *p;
-    uint16_t chip_id;
 
     patch = (struct rtk_epatch *)rtk_hw_cfg.fw_buf;
     entry = (struct rtk_epatch_entry *)malloc(sizeof(*entry));
@@ -2233,7 +2232,7 @@ struct rtk_epatch_entry *rtk_get_patch_entry(void)
     return entry;
 }
 
-void rtk_get_final_patch(int fd, int proto)
+static void rtk_get_final_patch(int fd, int proto)
 {
     uint8_t proj_id = 0;
     struct rtk_epatch_entry* entry = NULL;
@@ -2434,8 +2433,6 @@ SET_FLOW_CONTRL:
 */
 int rtk_init(int fd, int proto, int speed, struct termios *ti)
 {
-	struct sigaction sa;
-	int retlen;
 	RS_DBG("Realtek hciattach version %s \n", RTK_VERSION);
 
 	memset(&rtk_hw_cfg, 0, sizeof(rtk_hw_cfg));
