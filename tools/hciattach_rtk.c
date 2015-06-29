@@ -61,12 +61,10 @@
 #endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-#define cpu_to_le16(d)  (d)
 #define cpu_to_le32(d)  (d)
 #define le16_to_cpu(d)  (d)
 #define le32_to_cpu(d)  (d)
 #elif __BYTE_ORDER == __BIG_ENDIAN
-#define cpu_to_le16(d)  bswap_16(d)
 #define cpu_to_le32(d)  bswap_32(d)
 #define le16_to_cpu(d)  bswap_16(d)
 #define le32_to_cpu(d)  bswap_32(d)
