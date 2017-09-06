@@ -93,6 +93,8 @@ static void handle_characteristic(struct gatt_db_attribute *attr,
 		return;
 	}
 
+	//FIXME also handle https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.manufacturer_name_string.xml
+
 	if (bt_uuid_cmp(&pnpid_uuid, &uuid) == 0)
 		handle_pnpid(device, value_handle);
 	else {
