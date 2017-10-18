@@ -78,6 +78,10 @@ static ssize_t autopair_pincb(struct btd_adapter *adapter,
 	if (name != NULL && strstr(name, "iCade") != NULL)
 		return 0;
 
+	/* The PS3 Wireless Keypad doesn't need pairing */
+	if (name != NULL && g_str_equal(name, "Wireless Keypad"))
+		return 0;
+
 	/* This is a class-based pincode guesser. Ignore devices with an
 	 * unknown class.
 	 */
