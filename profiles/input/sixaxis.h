@@ -30,6 +30,7 @@ typedef enum {
 	CABLE_PAIRING_UNSUPPORTED = 0,
 	CABLE_PAIRING_SIXAXIS,
 	CABLE_PAIRING_DS4,
+	CABLE_PAIRING_PS3_WIRELESS_KEYPAD
 } CablePairingType;
 
 struct cable_pairing {
@@ -76,6 +77,14 @@ get_pairing(uint16_t vid, uint16_t pid)
 			.pid = 0x09cc,
 			.version = 0x0001,
 			.type = CABLE_PAIRING_DS4,
+		},
+		{
+			.name = "Wireless Keypad",
+			.source = 0x0002,
+			.vid = 0x054c,
+			.pid = 0x03a0,
+			.version = 0x0001,
+			.type = CABLE_PAIRING_PS3_WIRELESS_KEYPAD
 		},
 	};
 	guint i;
