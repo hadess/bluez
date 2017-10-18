@@ -143,10 +143,33 @@ static int ds4_get_device_bdaddr(int fd, bdaddr_t *bdaddr)
 	return 0;
 }
 
+static int ps3_keypad_get_device_bdaddr(int fd, bdaddr_t *bdaddr)
+{
+	uint8_t buf[16];
+	int ret;
+
+	memset(buf, 0, sizeof(buf));
+
+	buf[0] = 0x4;
+
+	ret = ioctl(fd, HIDIOCGFEATURE(sizeof(buf)), buf);
+	if (ret < 0) {
+		error("sixaxis: failed to read PS3 Keypad address (%s)",
+							strerror(errno));
+		return ret;
+	}
+
+	bacpy(bdaddr, (bdaddr_t *) (buf + 1));
+
+	return 0;
+}
+
 static int get_device_bdaddr(int fd, bdaddr_t *bdaddr, CablePairingType type)
 {
 	if (type == CABLE_PAIRING_SIXAXIS)
 		return sixaxis_get_device_bdaddr(fd, bdaddr);
+	else if (type == CABLE_PAIRING_PS3_WIRELESS_KEYPAD)
+		return ps3_keypad_get_device_bdaddr(fd, bdaddr);
 	else if (type == CABLE_PAIRING_DS4)
 		return ds4_get_device_bdaddr(fd, bdaddr);
 	return -1;
@@ -195,10 +218,33 @@ static int ds4_get_master_bdaddr(int fd, bdaddr_t *bdaddr)
 	return 0;
 }
 
+static int ps3_keypad_get_master_bdaddr(int fd, bdaddr_t *bdaddr)
+{
+	uint8_t buf[16];
+	int ret;
+
+	memset(buf, 0, sizeof(buf));
+
+	buf[0] = 0x4;
+
+	ret = ioctl(fd, HIDIOCGFEATURE(sizeof(buf)), buf);
+	if (ret < 0) {
+		error("sixaxis: failed to read PS3 Keypad master address (%s)",
+							strerror(errno));
+		return ret;
+	}
+
+	bacpy(bdaddr, (bdaddr_t *) (buf + 10));
+
+	return 0;
+}
+
 static int get_master_bdaddr(int fd, bdaddr_t *bdaddr, CablePairingType type)
 {
 	if (type == CABLE_PAIRING_SIXAXIS)
 		return sixaxis_get_master_bdaddr(fd, bdaddr);
+	else if (type == CABLE_PAIRING_PS3_WIRELESS_KEYPAD)
+		return ps3_keypad_get_master_bdaddr(fd, bdaddr);
 	else if (type == CABLE_PAIRING_DS4)
 		return ds4_get_master_bdaddr(fd, bdaddr);
 	return -1;
@@ -242,11 +288,30 @@ static int ds4_set_master_bdaddr(int fd, const bdaddr_t *bdaddr)
 	return ret;
 }
 
+static int ps3_keypad_set_master_bdaddr(int fd, const bdaddr_t *bdaddr)
+{
+	uint8_t buf[7];
+	int ret;
+
+	buf[0] = 0x05;
+
+	baswap((bdaddr_t*) (buf + 1), bdaddr);
+
+	ret = ioctl(fd, HIDIOCSFEATURE(sizeof(buf)), buf);
+	if (ret < 0)
+		error("sixaxis: failed to write PS3 Keypad master address (%s)",
+							strerror(errno));
+
+	return ret;
+}
+
 static int set_master_bdaddr(int fd, const bdaddr_t *bdaddr,
 					CablePairingType type)
 {
 	if (type == CABLE_PAIRING_SIXAXIS)
 		return sixaxis_set_master_bdaddr(fd, bdaddr);
+	else if (type == CABLE_PAIRING_PS3_WIRELESS_KEYPAD)
+		return ps3_keypad_set_master_bdaddr(fd, bdaddr);
 	else if (type == CABLE_PAIRING_DS4)
 		return ds4_set_master_bdaddr(fd, bdaddr);
 	return -1;
@@ -430,7 +495,8 @@ static void device_added(struct udev_device *udevice)
 
 	cp = get_pairing_type_for_device(udevice, &bus, &sysfs_path);
 	if (!cp || (cp->type != CABLE_PAIRING_SIXAXIS &&
-				cp->type != CABLE_PAIRING_DS4))
+				cp->type != CABLE_PAIRING_DS4 &&
+				cp->type != CABLE_PAIRING_PS3_WIRELESS_KEYPAD))
 		return;
 	if (bus != BUS_USB)
 		return;
