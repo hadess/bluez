@@ -338,12 +338,17 @@ static bool setup_device(int fd, const char *sysfs_path,
 			struct btd_adapter *adapter)
 {
 	bdaddr_t device_bdaddr;
+	char device_addr[18];
 	const bdaddr_t *adapter_bdaddr;
 	struct btd_device *device;
 	struct authentication_closure *closure;
 
-	if (get_device_bdaddr(fd, &device_bdaddr, cp->type) < 0)
+	if (get_device_bdaddr(fd, &device_bdaddr, cp->type) < 0) {
+		DBG("failed to get bdaddr for '%s'", sysfs_path);
 		return false;
+	}
+	ba2str(&device_bdaddr, device_addr);
+	DBG("got bdaddr %s for '%s'", device_addr, sysfs_path);
 
 	/* This can happen if controller was plugged while already setup and
 	 * connected eg. to charge up battery. */
@@ -353,8 +358,6 @@ static bool setup_device(int fd, const char *sysfs_path,
 		btd_device_is_connected(device) &&
 		g_slist_find_custom(btd_device_get_uuids(device), HID_UUID,
 						(GCompareFunc)strcasecmp)) {
-		char device_addr[18];
-		ba2str(&device_bdaddr, device_addr);
 		DBG("device %s already known, skipping", device_addr);
 		return false;
 	}
