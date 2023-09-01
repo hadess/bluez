@@ -657,7 +657,7 @@ static int parse_offset(const char *arg)
 
 	offset = strtoul(arg, &endptr, 0);
 	if (!endptr || *endptr != '\0' || offset > UINT16_MAX) {
-		bt_shell_printf("Invalid offload: %s", arg);
+		bt_shell_printf("Invalid offset: %s", arg);
 		return -EINVAL;
 	}
 
