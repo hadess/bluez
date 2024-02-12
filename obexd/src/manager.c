@@ -646,18 +646,13 @@ static void agent_reply(DBusPendingCall *call, void *user_data)
 				DBUS_TYPE_STRING, &name,
 				DBUS_TYPE_INVALID)) {
 		/* Splits folder and name */
-		const char *slash = strrchr(name, '/');
+		gboolean is_relative = !g_path_is_absolute(name);
 		DBG("Agent replied with %s", name);
-		if (!slash) {
-			agent->new_name = g_strdup(name);
+		agent->new_name = g_path_get_basename(name);
+		if (is_relative)
 			agent->new_folder = NULL;
-		} else {
-			if (strlen(slash) == 1)
-				agent->new_name = NULL;
-			else
-				agent->new_name = g_strdup(slash + 1);
-			agent->new_folder = g_strndup(name, slash - name);
-		}
+		else
+			agent->new_folder = g_path_get_dirname(name);
 	}
 
 	dbus_message_unref(reply);
