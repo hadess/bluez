@@ -420,9 +420,13 @@ static bool parse_config_string(GKeyFile *config, const char *group,
 					const char *key, char **val)
 {
 	GError *err = NULL;
-	char *tmp;
 
-	tmp = g_key_file_get_string(config, group, key, &err);
+	if (val != NULL) {
+		warn("%s passed a NULL value", __func__);
+		return false;
+	}
+
+	*val = g_key_file_get_string(config, group, key, &err);
 	if (err) {
 		if (err->code != G_KEY_FILE_ERROR_KEY_NOT_FOUND)
 			DBG("%s", err->message);
@@ -430,12 +434,7 @@ static bool parse_config_string(GKeyFile *config, const char *group,
 		return false;
 	}
 
-	DBG("%s.%s = %s", group, key, tmp);
-
-	if (val) {
-		g_free(*val);
-		*val = tmp;
-	}
+	DBG("%s.%s = %s", group, key, *val);
 
 	return true;
 }
@@ -1004,7 +1003,12 @@ static void parse_secure_conns(GKeyFile *config)
 
 static void parse_general(GKeyFile *config)
 {
-	parse_config_string(config, "General", "Name", &btd_opts.name);
+	char *str = NULL;
+
+	if (parse_config_string(config, "General", "Name", &str)) {
+		g_free(btd_opts.name);
+		btd_opts.name = str;
+	}
 	parse_config_hex(config, "General", "Class", &btd_opts.class);
 	parse_config_u32(config, "General", "DiscoverableTimeout",
 						&btd_opts.discovto,
