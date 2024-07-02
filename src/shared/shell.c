@@ -452,13 +452,23 @@ static void shell_print_menu_zsh_complete(void)
 	}
 }
 
+static int _wordexp(const char *restrict s, wordexp_t *restrict p, int flags)
+{
+	int ret;
+
+	ret = wordexp(s, p, flags);
+	if (ret != 0)
+		wordfree(p);
+	return ret;
+}
+
 static int parse_args(char *arg, wordexp_t *w, char *del, int flags)
 {
 	char *str;
 
 	str = strdelimit(arg, del, '"');
 
-	if (wordexp(str, w, flags)) {
+	if (_wordexp(str, w, flags) != 0) {
 		free(str);
 		return -EINVAL;
 	}
@@ -537,7 +547,7 @@ static int cmd_exec(const struct bt_shell_menu_entry *entry,
 		goto fail;
 	}
 
-	flags |= WRDE_APPEND;
+	flags |= WRDE_APPEND | WRDE_REUSE;
 	opt = strdup(entry->arg + len + 1);
 
 optional:
@@ -1043,7 +1053,7 @@ static char **args_completion(const struct bt_shell_menu_entry *entry, int argc,
 	args.we_offs = 0;
 	wordfree(&args);
 
-	if (wordexp(str, &args, WRDE_NOCMD))
+	if (_wordexp(str, &args, WRDE_NOCMD))
 		goto done;
 
 	rl_completion_display_matches_hook = NULL;
@@ -1115,7 +1125,7 @@ static char **shell_completion(const char *text, int start, int end)
 	if (start > 0) {
 		wordexp_t w;
 
-		if (wordexp(rl_line_buffer, &w, WRDE_NOCMD))
+		if (_wordexp(rl_line_buffer, &w, WRDE_NOCMD))
 			return NULL;
 
 		matches = menu_completion(default_menu, text, w.we_wordc,
@@ -1416,7 +1426,7 @@ int bt_shell_exec(const char *input)
 	if (data.monitor)
 		bt_log_printf(0xffff, data.name, LOG_INFO, "%s", input);
 
-	err = wordexp(input, &w, WRDE_NOCMD);
+	err = _wordexp(input, &w, WRDE_NOCMD);
 	switch (err) {
 	case WRDE_BADCHAR:
 		return -EBADMSG;
@@ -1426,7 +1436,7 @@ int bt_shell_exec(const char *input)
 	case WRDE_NOSPACE:
 		return -ENOMEM;
 	case WRDE_CMDSUB:
-		if (wordexp(input, &w, 0))
+		if (_wordexp(input, &w, 0))
 			return -ENOEXEC;
 		break;
 	};
