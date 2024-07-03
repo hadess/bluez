@@ -908,7 +908,7 @@ static void read_complete_cb(struct gatt_db_attribute *attr, int err,
 	struct async_read_op *op = user_data;
 	struct bt_gatt_server *server = op->server;
 	uint8_t rsp_opcode;
-	uint16_t mtu;
+	size_t mtu;
 	uint16_t handle;
 
 	DBG(server, "Read Complete: err %d", err);
@@ -916,7 +916,7 @@ static void read_complete_cb(struct gatt_db_attribute *attr, int err,
 	mtu = bt_att_get_mtu(server->att);
 	handle = gatt_db_attribute_get_handle(attr);
 
-	if (err) {
+	if (err || mtu <= 1) {
 		bt_att_chan_send_error_rsp(op->chan, op->opcode, handle, err);
 		async_read_op_destroy(op);
 		return;
@@ -925,7 +925,7 @@ static void read_complete_cb(struct gatt_db_attribute *attr, int err,
 	rsp_opcode = get_read_rsp_opcode(op->opcode);
 
 	bt_att_chan_send_rsp(op->chan, rsp_opcode, len ? value : NULL,
-					MIN((unsigned int) mtu - 1, len));
+					MIN(mtu - 1, len));
 	async_read_op_destroy(op);
 }
 
