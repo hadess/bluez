@@ -555,6 +555,7 @@ optional:
 		print_text(COLOR_HIGHLIGHT,
 			"Unable to parse optional command arguments: %s", opt);
 		free(opt);
+		/* coverity[leaked_storage : FALSE] */
 		return -EINVAL;
 	}
 
