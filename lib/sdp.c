@@ -1893,9 +1893,11 @@ static int sdp_get_proto_descs(uint16_t attr_id, const sdp_record_t *rec,
 				sdp_list_free(pds, NULL);
 				goto failed;
 			}
+			/* coverity[overwrite_var] : FALSE */
 			pds = sdp_list_append(pds, curr->val.dataseq);
 		}
 
+		/* coverity[overwrite_var] : FALSE */
 		ap = sdp_list_append(ap, pds);
 	}
 

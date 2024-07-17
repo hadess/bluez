@@ -194,6 +194,7 @@ static void search_completed_cb(uint8_t type, uint16_t status,
 			continue;
 		}
 
+		/* coverity[overwrite_var] : FALSE */
 		recs = sdp_list_append(recs, rec);
 	} while (scanned < (ssize_t) size && bytesleft > 0);
 
