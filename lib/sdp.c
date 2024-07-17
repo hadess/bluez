@@ -1678,13 +1678,13 @@ sdp_data_t *sdp_data_get(const sdp_record_t *rec, uint16_t attrId)
 	return NULL;
 }
 
-static int sdp_send_req(sdp_session_t *session, uint8_t *buf, uint32_t size)
+static int sdp_send_req(sdp_session_t *session, uint8_t *buf, size_t size)
 {
-	uint32_t sent = 0;
+	size_t sent = 0;
 
 	while (sent < size) {
 		int n = send(session->sock, buf + sent, size - sent, 0);
-		if (n < 0)
+		if (n < 0 || sent > SIZE_MAX - n)
 			return -1;
 		sent += n;
 	}
