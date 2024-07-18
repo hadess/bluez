@@ -389,7 +389,7 @@ int mcap_send_data(int sock, const void *buf, uint32_t size)
 
 	while (sent < size) {
 		int n = write(sock, buf_b + sent, size - sent);
-		if (n < 0)
+		if (n < 0 || n > SSIZE_MAX - sent)
 			return -1;
 		sent += n;
 	}
