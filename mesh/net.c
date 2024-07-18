@@ -1776,6 +1776,7 @@ static bool msg_rxed(struct mesh_net *net, bool frnd, uint32_t iv_index,
 			hdr |= SEG_MAX(true, size) << SEGN_HDR_SHIFT;
 		}
 
+		/* coverity[overrun-call] : FALSE */
 		if (friend_packet_queue(net, iv_index, false, frnd_ttl,
 					seq, src, dst,
 					hdr, data, size))
@@ -2054,6 +2055,7 @@ static bool seg_rxed(struct mesh_net *net, bool frnd, uint32_t iv_index,
 		send_net_ack(net, sar_in, expected);
 
 		/* coverity[overrun-buffer-val] : FALSE */
+		/* coverity[overrun-call] : FALSE */
 		msg_rxed(net, frnd, iv_index, ttl, seq, net_idx,
 				sar_in->remote, dst, key_aid, true, szmic,
 				sar_in->seqZero, sar_in->buf, sar_in->len);
@@ -3289,6 +3291,7 @@ bool mesh_net_app_send(struct mesh_net *net, bool frnd_cred, uint16_t src,
 	segmented |= !!(seg_max);
 
 	/* First enqueue to any Friends and internal models */
+	/* coverity[overrun-call] : FALSE */
 	result = msg_rxed(net, false, iv_index, ttl, seq, net_idx, src, dst,
 				key_aid, segmented, szmic, seq & SEQ_ZERO_MASK,
 				msg, msg_len);
