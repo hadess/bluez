@@ -273,6 +273,7 @@ static void send_hb_publication(void *data)
 	l_put_be16(net->features, msg + n);
 	n += 2;
 
+	/* coverity[overrun-buffer-val] : FALSE */
 	mesh_net_transport_send(net, 0, 0, mesh_net_get_iv_index(net),
 					pub->ttl, 0, 0, pub->dst, msg, n);
 }
@@ -1460,6 +1461,7 @@ static void send_frnd_ack(struct mesh_net *net, uint16_t src, uint16_t dst,
 		friend_ack_rxed(net, mesh_net_get_iv_index(net),
 				mesh_net_next_seq_num(net), 0, dst, msg);
 	} else {
+		/* coverity[overrun-buffer-val] : FALSE */
 		mesh_net_transport_send(net, 0, 0,
 				mesh_net_get_iv_index(net), DEFAULT_TTL,
 				0, 0, dst, msg, sizeof(msg));
@@ -1495,6 +1497,7 @@ static void send_net_ack(struct mesh_net *net, struct mesh_sar *sar,
 		return;
 	}
 
+	/* coverity[overrun-buffer-val] : FALSE */
 	mesh_net_transport_send(net, 0, sar->net_idx,
 				mesh_net_get_iv_index(net), DEFAULT_TTL,
 				0, src, dst, msg,
@@ -2050,6 +2053,7 @@ static bool seg_rxed(struct mesh_net *net, bool frnd, uint32_t iv_index,
 		/* Got it all */
 		send_net_ack(net, sar_in, expected);
 
+		/* coverity[overrun-buffer-val] : FALSE */
 		msg_rxed(net, frnd, iv_index, ttl, seq, net_idx,
 				sar_in->remote, dst, key_aid, true, szmic,
 				sar_in->seqZero, sar_in->buf, sar_in->len);

@@ -323,6 +323,7 @@ static void clear_retry(struct l_timeout *timeout, void *user_data)
 
 	l_put_be16(neg->lp_addr, msg + 1);
 	l_put_be16(neg->lp_cnt, msg + 3);
+	/* coverity[overrun-buffer-val] : FALSE */
 	mesh_net_transport_send(neg->net, 0, 0,
 			mesh_net_get_iv_index(neg->net), DEFAULT_TTL,
 			0, 0, neg->old_friend,
