@@ -779,6 +779,8 @@ static int read_stream(int fd, ssize_t count)
 		len = read(fd, buf + ret, count - ret);
 		if (len < 0)
 			return -errno;
+		if (len > SSIZE_MAX - ret)
+			return -EOVERFLOW;
 
 		ret += len;
 		usleep(1000);
