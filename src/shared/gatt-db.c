@@ -560,9 +560,14 @@ static int uuid_to_le(const bt_uuid_t *uuid, uint8_t *dst)
 		return bt_uuid_len(uuid);
 	}
 
-	bt_uuid_to_uuid128(uuid, &uuid128);
-	bswap_128(&uuid128.value.u128, dst);
-	return bt_uuid_len(&uuid128);
+	if (uuid->type == BT_UUID32 ||
+	    uuid->type == BT_UUID128) {
+		bt_uuid_to_uuid128(uuid, &uuid128);
+		bswap_128(&uuid128.value.u128, dst);
+		return bt_uuid_len(&uuid128);
+	}
+
+	return 0;
 }
 
 static bool le_to_uuid(const uint8_t *src, size_t len, bt_uuid_t *uuid)
