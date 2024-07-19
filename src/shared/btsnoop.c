@@ -530,7 +530,7 @@ bool btsnoop_read_hci(struct btsnoop *btsnoop, struct timeval *tv,
 	}
 
 	toread = be32toh(pkt.len);
-	if (toread > BTSNOOP_MAX_PACKET_SIZE) {
+	if (toread > BTSNOOP_MAX_PACKET_SIZE || toread < 1) {
 		btsnoop->aborted = true;
 		return false;
 	}
@@ -565,6 +565,11 @@ bool btsnoop_read_hci(struct btsnoop *btsnoop, struct timeval *tv,
 		break;
 
 	default:
+		btsnoop->aborted = true;
+		return false;
+	}
+
+	if (toread == 0) {
 		btsnoop->aborted = true;
 		return false;
 	}
