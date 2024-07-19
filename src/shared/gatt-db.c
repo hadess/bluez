@@ -616,6 +616,7 @@ static struct gatt_db_service *gatt_db_service_create(const bt_uuid_t *uuid,
 
 	len = uuid_to_le(uuid, value);
 
+	/* coverity[overrun-buffer-arg] : FALSE */
 	service->attributes[0] = new_attribute(service, handle, type, value,
 									len);
 	if (!service->attributes[0]) {
@@ -980,6 +981,7 @@ service_insert_characteristic(struct gatt_db_service *service,
 	len += sizeof(uint16_t);
 	len += uuid_to_le(uuid, &value[3]);
 
+	/* coverity[overrun-buffer-arg] : FALSE */
 	service->attributes[i] = new_attribute(service, handle,
 							&characteristic_uuid,
 							value, len);
@@ -1007,8 +1009,11 @@ service_insert_characteristic(struct gatt_db_service *service,
 
 	/* Update handle of characteristic value_handle if it has changed */
 	put_le16(value_handle, &value[1]);
-	if (memcmp((*chrc)->value, value, len))
+	/* coverity[overrun-buffer-arg] : FALSE */
+	if (memcmp((*chrc)->value, value, len)) {
+		/* coverity[overrun-buffer-arg] : FALSE */
 		memcpy((*chrc)->value, value, len);
+	}
 
 	set_attribute_data(service->attributes[i], read_func, write_func,
 							permissions, user_data);
