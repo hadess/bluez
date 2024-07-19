@@ -945,6 +945,8 @@ static bool test_io_send(struct io *io, void *user_data)
 
 	len = io_send(io, iov, 1);
 
+	g_assert(len > 0);
+
 	tester_monitor('<', 0x0004, 0x0000, iov->iov_base, len);
 
 	g_assert_cmpint(len, ==, iov->iov_len);
