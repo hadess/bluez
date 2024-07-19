@@ -18,6 +18,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <errno.h>
+#include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1091,9 +1092,14 @@ static void client_callback(int fd, uint32_t events, void *user_data)
 		return;
 	}
 
+	if (sizeof(data->buf) <= data->offset)
+		return;
+
 	len = recv(data->fd, data->buf + data->offset,
 			sizeof(data->buf) - data->offset, MSG_DONTWAIT);
-	if (len < 0)
+	if (len < 0 ||
+	    len > UINT16_MAX ||
+	    UINT16_MAX - data->offset > len)
 		return;
 
 	data->offset += len;
