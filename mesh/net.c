@@ -3149,13 +3149,22 @@ static bool send_seg(struct mesh_net *net, uint8_t cnt, uint16_t interval,
 	uint32_t seq_num;
 
 	if (msg->segmented) {
+		if (msg->len < seg_off) {
+			l_error("Failed to build packet");
+			return false;
+		}
 		/* Send each segment on unique seq_num */
 		seq_num = mesh_net_next_seq_num(net);
 
-		if (msg->len - seg_off > SEG_OFF(1))
+		if (msg->len - seg_off > SEG_OFF(1)) {
 			seg_len = SEG_OFF(1);
-		else
+		} else {
+			if (msg->len - seg_off > UINT8_MAX) {
+				l_error("Failed to build packet");
+				return false;
+			}
 			seg_len = msg->len - seg_off;
+		}
 	} else {
 		/* Send on same seq_num used for Access Layer */
 		seq_num = msg->seqAuth;
