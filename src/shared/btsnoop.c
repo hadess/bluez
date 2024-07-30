@@ -553,6 +553,7 @@ bool btsnoop_read_hci(struct btsnoop *btsnoop, struct timeval *tv,
 			btsnoop->aborted = true;
 			return false;
 		}
+		/* coverity[underflow] : FALSE */
 		toread--;
 
 		*index = 0;
