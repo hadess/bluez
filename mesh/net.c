@@ -3306,6 +3306,7 @@ bool mesh_net_app_send(struct mesh_net *net, bool frnd_cred, uint16_t src,
 
 	/* Setup OTA Network send */
 	payload = mesh_sar_new(msg_len);
+	/* coverity[overrun-buffer-arg] : FALSE */
 	memcpy(payload->buf, msg, msg_len);
 	payload->len = msg_len;
 	payload->src = src;
