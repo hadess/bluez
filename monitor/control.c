@@ -1102,6 +1102,7 @@ static void client_callback(int fd, uint32_t events, void *user_data)
 	    UINT16_MAX - data->offset > len)
 		return;
 
+	/* coverity[overflow] : FALSE */
 	data->offset += len;
 
 	while (data->offset >= MGMT_HDR_SIZE) {
