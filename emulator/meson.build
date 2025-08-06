@@ -17,7 +17,9 @@ if get_option('tests').allowed()
       'smp.c',
       'phy.c',
       'le.c' ],
-    dependencies: [ libbluetooth_internal_dep, libshared_mainloop_dep ]
+    dependencies: [ libbluetooth_internal_dep, libshared_mainloop_dep ],
+    install: true,
+    install_dir: pkglibexecdir
   )
 
   executable('b1ee',
