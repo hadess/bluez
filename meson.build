@@ -7,7 +7,7 @@ project(
 )
 
 datadir = get_option('datadir')
-storagedir = get_option('localstatedir') / 'lib/bluetooth'
+storagedir = '/' / get_option('localstatedir') / 'lib/bluetooth'
 configdir = get_option('sysconfdir') / 'bluetooth'
 pkglibdir = get_option('libdir') / 'bluetooth'
 pkglibexecdir = get_option('libexecdir') / 'bluetooth'
