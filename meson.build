@@ -254,7 +254,9 @@ subdir('btio')
 subdir('plugins')
 subdir('profiles')
 subdir('src')
-subdir('client')
+if get_option('client').enabled()
+  subdir('client')
+endif
 if get_option('monitor').enabled()
   subdir('monitor')
 endif
