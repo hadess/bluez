@@ -146,7 +146,8 @@ bluetoothd_rst = configure_file(
   output: 'bluetoothd.rst',
   configuration: man_conf
 )
-if rst2man.found()
+
+if get_option('daemon').enabled() and rst2man.found()
   custom_target(
     input: bluetoothd_rst,
     output: 'bluetoothd.8',
