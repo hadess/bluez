@@ -81,8 +81,14 @@ else
 endif
 
 exe = executable('test-profile',
-  sources: [ 'test-profile.c', 'btd.c', '../src/profile.c' ],
-  dependencies: [ dbus_dep, libshared_glib_dep, libbluetooth_internal_dep ]
+  sources: [ 'test-profile.c', 'btd.c', bluetoothd_internal_sources, btio_sources ],
+  c_args: [ '-DSTORAGEDIR="@0"'.format(storagedir) ],
+  dependencies: [
+    libgdbus_internal_dep,
+    libshared_glib_dep,
+    libbluetooth_internal_dep,
+    backtrace_dep
+  ]
 )
 test('test-profile', exe)
 
