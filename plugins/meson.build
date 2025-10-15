@@ -4,7 +4,11 @@ builtin_modules = [
   'policy',
 ]
 
+# FIXME
+# keep .rs file first
+# See https://github.com/mesonbuild/meson/pull/15125
 builtin_sources = files(
+  'test.rs',
   'hostname.c',
   'autopair.c',
   'policy.c'
