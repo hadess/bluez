@@ -1,4 +1,5 @@
 builtin_modules = [
+  'rust_test',
   'hostname',
   'autopair',
   'policy',
@@ -8,7 +9,8 @@ builtin_modules = [
 # keep .rs file first
 # See https://github.com/mesonbuild/meson/pull/15125
 builtin_sources = files(
-  'test.rs',
+  'rust-test.rs',
+  'rust-test.c',
   'hostname.c',
   'autopair.c',
   'policy.c'
