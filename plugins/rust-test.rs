@@ -4,7 +4,7 @@
 
 use std::ffi::CStr;
 
-pub const BLUETOOTH_PLUGIN_PRIORITY_DEFAULT: u32 = 0;
+pub const BLUETOOTH_PLUGIN_PRIORITY_DEFAULT: i32 = 0;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -18,13 +18,18 @@ pub struct bluetooth_plugin_desc {
     pub debug_stop: *mut ::std::os::raw::c_void,
 }
 
-//#[unsafe]
-const rust_test: bluetooth_plugin_desc = bluetooth_plugin_desc {
-    name: &CStr = c"rust_test",
-//    version: "5.84",
-//    priority: BLUETOOTH_PLUGIN_PRIORITY_DEFAULT,
-//    init: rust_test_init,
-//    exit: rust_test_exit
+static PLUGIN_NAME: &CStr = c"rust_test";
+static VERSION: &CStr = c"5.84";
+
+//#[unsafe(export_name = "__bluetooth_builtin_rust_test")]
+const __bluetooth_builtin_rust_test: bluetooth_plugin_desc = bluetooth_plugin_desc {
+    name: PLUGIN_NAME.as_ptr(),
+    version: VERSION.as_ptr(),
+    priority: BLUETOOTH_PLUGIN_PRIORITY_DEFAULT,
+    init: Some(rust_test_init),
+    exit: Some(rust_test_exit),
+    debug_start: std::ptr::null_mut(),
+    debug_stop: std::ptr::null_mut()
 };
 
 #[unsafe(no_mangle)]
