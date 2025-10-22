@@ -10,7 +10,6 @@ builtin_modules = [
 # See https://github.com/mesonbuild/meson/pull/15125
 builtin_sources = files(
   'rust-test.rs',
-  'rust-test.c',
   'hostname.c',
   'autopair.c',
   'policy.c'

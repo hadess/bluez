@@ -66,6 +66,8 @@ config_h.set10('HAVE_DECL_BASENAME',
 # To combine with -Wl,--gc-sections
 add_project_arguments([ '-ffunction-sections', '-fdata-sections' ] , language: 'c')
 
+add_project_arguments(['--edition', '2024'], language: 'rust')
+
 # Maintainer mode
 if get_option('buildtype').contains('debug')
   test_cflags = [
