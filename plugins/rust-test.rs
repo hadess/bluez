@@ -21,7 +21,7 @@ pub struct bluetooth_plugin_desc {
 static PLUGIN_NAME: &CStr = c"rust_test";
 static VERSION: &CStr = c"5.84";
 
-//#[unsafe(no_mangle)]
+#[allow(non_upper_case_globals)]
 #[unsafe(export_name = "__bluetooth_builtin_rust_test")]
 pub static __bluetooth_builtin_rust_test: bluetooth_plugin_desc = bluetooth_plugin_desc {
     name: PLUGIN_NAME.as_ptr(),
@@ -32,6 +32,9 @@ pub static __bluetooth_builtin_rust_test: bluetooth_plugin_desc = bluetooth_plug
     debug_start: std::ptr::null_mut(),
     debug_stop: std::ptr::null_mut()
 };
+
+unsafe impl Sync for bluetooth_plugin_desc {}
+unsafe impl Send for bluetooth_plugin_desc {}
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn rust_test_init() -> i32 {
