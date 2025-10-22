@@ -21,8 +21,9 @@ pub struct bluetooth_plugin_desc {
 static PLUGIN_NAME: &CStr = c"rust_test";
 static VERSION: &CStr = c"5.84";
 
-//#[unsafe(export_name = "__bluetooth_builtin_rust_test")]
-const __bluetooth_builtin_rust_test: bluetooth_plugin_desc = bluetooth_plugin_desc {
+//#[unsafe(no_mangle)]
+#[unsafe(export_name = "__bluetooth_builtin_rust_test")]
+pub static __bluetooth_builtin_rust_test: bluetooth_plugin_desc = bluetooth_plugin_desc {
     name: PLUGIN_NAME.as_ptr(),
     version: VERSION.as_ptr(),
     priority: BLUETOOTH_PLUGIN_PRIORITY_DEFAULT,
