@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 project(
-  'bluez', [ 'c', 'rust' ],
+  'bluez', [ 'c' ],
   version: '5.84',
   license: 'LGPL-2.1-or-later AND GPL-2.0-or-later',
   meson_version: '>= 1.9.0'
@@ -65,8 +65,6 @@ config_h.set10('HAVE_DECL_BASENAME',
 
 # To combine with -Wl,--gc-sections
 add_project_arguments([ '-ffunction-sections', '-fdata-sections' ] , language: 'c')
-
-add_project_arguments(['--edition', '2024'], language: 'rust')
 
 # Maintainer mode
 if get_option('buildtype').contains('debug')
@@ -235,6 +233,12 @@ if get_option('external-plugins').enabled()
     '-Wl,--export-dynamic',
     '-Wl,--version-script=' + meson.project_source_root() / 'src/bluetooth.ver'
   ]
+endif
+
+have_rust = add_languages('rust', native: false,
+  required: get_option('rust').enabled())
+if have_rust
+  add_project_arguments(['--edition', '2024'], language: 'rust')
 endif
 
 config_h.set('HAVE_A2DP', get_option('a2dp').enabled())

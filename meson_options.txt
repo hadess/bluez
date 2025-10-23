@@ -15,6 +15,7 @@ option('manpages', type: 'feature', value: 'auto', description: 'Enable building
 option('experimental', type: 'feature', value: 'disabled', description: 'Enable experimental tools')
 option('deprecated', type: 'feature', value: 'disabled', description: 'Enable deprecated tools')
 option('external-plugins', type: 'feature', value: 'enabled', description: 'Enable support for external plugins')
+option('rust', type: 'feature', value: 'enabled', description: 'Enable support for Rust plugins')
 
 option('dbusconfdir', type: 'string', value: '', description: 'D-Bus configuration directory')
 option('dbussystembusdir', type: 'string', value: '', description: 'D-Bus system bus services dir')
