@@ -1,20 +1,18 @@
 #![no_main]
 
-//use crate::rust::version;
-
 pub mod plugin;
-//pub mod version;
+pub mod version;
 
 use std::ffi::CStr;
 
-static VERSION: &CStr = c"5.84";
+//static VERSION: &CStr = c"5.84";
 static PLUGIN_NAME: &CStr = c"rust_test";
 
 #[allow(non_upper_case_globals)]
 #[unsafe(export_name = "__bluetooth_builtin_rust_test")]
 pub static __bluetooth_builtin_rust_test: plugin::bluetooth_plugin_desc = plugin::bluetooth_plugin_desc {
     name: PLUGIN_NAME.as_ptr(),
-    version: VERSION.as_ptr(),
+    version: version::VERSION.as_ptr(),
     priority: plugin::BLUETOOTH_PLUGIN_PRIORITY_DEFAULT,
     init: Some(rust_test_init),
     exit: Some(rust_test_exit),

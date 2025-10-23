@@ -227,6 +227,10 @@ if cups_dep.found()
   endif
 endif
 
+builtin_modules = []
+builtin_sources = []
+builtin_deps = []
+
 external_plugins_link_args = ''
 if get_option('external-plugins').enabled()
   external_plugins_link_args = [
