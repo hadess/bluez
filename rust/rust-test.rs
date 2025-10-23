@@ -13,7 +13,7 @@ static PLUGIN_NAME: &CStr = c"rust_test";
 pub static __bluetooth_builtin_rust_test: plugin::bluetooth_plugin_desc = plugin::bluetooth_plugin_desc {
     name: PLUGIN_NAME.as_ptr(),
     version: version::VERSION.as_ptr(),
-    priority: plugin::BLUETOOTH_PLUGIN_PRIORITY_DEFAULT,
+    priority: plugin::PRIORITY_DEFAULT,
     init: Some(rust_test_init),
     exit: Some(rust_test_exit),
     debug_start: std::ptr::null_mut(),
