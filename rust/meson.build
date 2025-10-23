@@ -11,5 +11,6 @@ builtin_modules += 'rust_test'
 builtin_sources += structured_sources([
   'rust-test.rs',
   'plugin.rs',
+  'adapter.rs',
   version_rs
 ])
