@@ -253,6 +253,9 @@ configure_file(
   configuration: config_h
 )
 
+if have_rust
+  subdir('rust')
+endif
 subdir('lib')
 subdir('gdbus')
 subdir('attrib')
