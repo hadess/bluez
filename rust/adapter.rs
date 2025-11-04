@@ -60,3 +60,26 @@ const _: () = {
     ["Offset of field: btd_adapter_driver::experimental"]
         [::std::mem::offset_of!(btd_adapter_driver, experimental) - 56usize];
 };
+
+unsafe extern "C" {
+    pub fn btd_adapter_is_default(adapter: *mut btd_adapter) -> bool;
+}
+unsafe extern "C" {
+    pub fn btd_adapter_set_name(
+        adapter: *mut btd_adapter,
+        name: *const ::std::os::raw::c_char,
+    ) -> ::std::os::raw::c_int;
+}
+pub const MGMT_INDEX_NONE: u16 = 0xFFFF;
+unsafe extern "C" {
+    pub fn btd_adapter_get_index(adapter: *mut btd_adapter) -> u16;
+}
+unsafe extern "C" {
+    pub fn btd_adapter_set_class(adapter: *mut btd_adapter, major: u8, minor: u8);
+}
+#[allow(non_camel_case_types)]
+pub type adapter_cb =
+    ::std::option::Option<unsafe extern "C" fn(adapter: *mut btd_adapter, user_data: *mut ::std::os::raw::c_void)>;
+unsafe extern "C" {
+    pub fn btd_adapter_foreach(func: adapter_cb, user_data: *mut ::std::os::raw::c_void);
+}
