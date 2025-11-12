@@ -1,11 +1,9 @@
 builtin_modules += [
-  'hostname',
   'autopair',
   'policy',
 ]
 
 builtin_sources += files(
-  'hostname.c',
   'autopair.c',
   'policy.c'
 )
