@@ -7,9 +7,9 @@ version_rs = configure_file(
 # FIXME
 # keep .rs file first
 # See https://github.com/mesonbuild/meson/pull/15125
-builtin_modules += 'hostname'
+builtin_modules += 'rust_test'
 builtin_sources += structured_sources([
-  'hostname.rs',
+  'rust-test.rs',
   'plugin.rs',
   'adapter.rs',
   version_rs
