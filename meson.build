@@ -291,6 +291,7 @@ endif
 if rst2man.found()
   subdir('doc')
 endif
+sh = find_program('sh', required: true)
 if get_option('tests').allowed()
   subdir('test')
   subdir('unit')
@@ -298,7 +299,6 @@ endif
 
 # Fix permissions on install
 install = find_program('install')
-sh = find_program('sh')
 if get_option('daemon').enabled()
   meson.add_install_script(sh, '-c', 'install -dm755 ${DESTDIR}/' + configdir)
 endif
