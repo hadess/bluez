@@ -12,6 +12,7 @@ option('logind', type: 'feature', value: 'enabled', description: 'Enable logind 
 option('udev', type: 'feature', value: 'enabled', description: 'Enable udev device support in tools')
 option('datafiles', type: 'feature', value: 'enabled', description: 'Install configuration and data files')
 option('manpages', type: 'feature', value: 'auto', description: 'Enable building of manual pages')
+option('documentation', type: 'feature', value: 'auto', description: 'Enable building of online documentation')
 option('experimental', type: 'feature', value: 'disabled', description: 'Enable experimental tools')
 option('deprecated', type: 'feature', value: 'disabled', description: 'Enable deprecated tools')
 option('external-plugins', type: 'feature', value: 'enabled', description: 'Enable support for external plugins')
