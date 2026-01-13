@@ -165,6 +165,10 @@ ell_mesh_dep = dependency('ell',
   required: get_option('mesh')
 )
 
+pymod = import('python')
+sphinx_build = find_program('sphinx-build', native: true, required: get_option('documentation'))
+sphinx_modules = pymod.find_installation(modules: ['sphinxext.opengraph', 'sphinx_copybutton', 'furo'], required: get_option('documentation'))
+
 rst2man = find_program('rst2man', 'rst2man.py', required: get_option('manpages'))
 if rst2man.found()
   rst2man_command = [
@@ -300,7 +304,7 @@ endif
 if get_option('mesh').enabled()
   subdir('mesh')
 endif
-if rst2man.found()
+if get_option('manpages').enabled() or get_option('documentation').enabled()
   subdir('doc')
 endif
 sh = find_program('sh', required: true)
