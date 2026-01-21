@@ -239,6 +239,7 @@ if get_option('documentation').enabled()
     'tools.rst',
     'deprecated-tools.rst',
     'dbus.rst',
+    'gatt-intro.rst',
     'dbus-gatt.rst',
     'dbus-obex.rst',
     'qualifications.rst',
