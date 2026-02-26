@@ -269,6 +269,14 @@ configure_file(
   configuration: config_h
 )
 
+python = import('python')
+python3 = python.find_installation('python3')
+has_pythonmodules = false
+script = 'import dbusmock\nimport pexpect'
+if run_command(python3, '-c', script, check: false).returncode() == 0
+  has_pythonmodules = true
+endif
+
 subdir('lib')
 if not get_option('tools').disabled() or get_option('client').enabled() or get_option('obex').enabled() or not get_option('tests').disabled() or not get_option('daemon').disabled()
   subdir('gdbus')
