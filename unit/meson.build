@@ -162,3 +162,33 @@ add_test_setup(
   # default timeout in meson is 30s
   timeout_multiplier: 4,
 )
+
+if not has_pythonmodules
+  test('integration-test-skipped',
+    find_program('integration-test-skipped.sh'),
+  )
+else
+  integration_test = find_program('integration-test.py')
+
+  envs = environment()
+  envs.set ('top_builddir', meson.global_build_root())
+  envs.set ('top_srcdir', meson.global_source_root())
+
+  test_deps = []
+
+  python3 = find_program('python3')
+  unittest_inspector = find_program('unittest_inspector.py')
+  r = run_command(unittest_inspector, files('integration-test.py'), check: true)
+  unit_tests = r.stdout().strip().split('\n')
+
+  foreach ut: unit_tests
+    ut_args = files('integration-test.py')
+    ut_args += ut
+    test(ut,
+      python3,
+      args: ut_args,
+      env: envs,
+      depends: test_deps
+    )
+  endforeach
+endif
