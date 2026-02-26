@@ -258,6 +258,14 @@ configure_file(
   configuration: config_h
 )
 
+python = import('python')
+python3 = python.find_installation('python3')
+has_dbusmock = false
+script = 'import dbusmock'
+if run_command(python3, '-c', script, check: false).returncode() == 0
+  has_dbusmock = true
+endif
+
 subdir('lib')
 if not get_option('tools').disabled() or get_option('client').enabled() or get_option('obex').enabled() or not get_option('tests').disabled() or not get_option('daemon').disabled()
   subdir('gdbus')
@@ -306,3 +314,6 @@ endif
 if get_option('mesh').enabled()
   meson.add_install_script(sh, '-c', 'install -dm700 ${DESTDIR}/' + meshstoragedir)
 endif
+
+summary({'Integration tests': has_dbusmock},
+  section: 'General')
