@@ -134,6 +134,12 @@ cups_dep = dependency('cups', required: get_option('cups'))
 jsonc_dep = dependency('json-c', version: '>= 0.13', required: get_option('mesh'))
 alsa_dep = dependency('alsa', required: get_option('midi'))
 ical_dep = dependency('libical', required: get_option('obex'))
+ical4_dep = dependency('libical', version: '>= 4.0', required: false)
+if ical_dep.found() and ical4_dep.found()
+  icalvcal_dep = dependency('libicalvcal', required: get_option('obex'))
+else
+  icalvcal_dep = dummy_dep
+endif
 readline_dep = dependency('readline',
   required: get_option('client').enabled() or
     get_option('mesh').enabled())
