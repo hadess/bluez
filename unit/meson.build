@@ -91,7 +91,7 @@ foreach t: tests3
     sources: t,
     c_args: [ '-DSTORAGEDIR="@0"'.format(storagedir) ],
     include_directories: '../lib',
-    dependencies: libshared_glib_dep
+    dependencies: [ libshared_glib_dep, libbluetooth_internal_dep ]
   )
   test(test_name, exe)
 endforeach
