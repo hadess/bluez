@@ -6,14 +6,18 @@ project(
   meson_version: '>= 1.3.0'
 )
 
+fs = import('fs')
+
 datadir = get_option('datadir')
 storagedir = '/' / get_option('localstatedir') / 'lib/bluetooth'
 configdir = get_option('sysconfdir') / 'bluetooth'
+if not fs.is_absolute(configdir)
+  configdir = get_option('prefix') / configdir
+endif
 pkglibdir = get_option('libdir') / 'bluetooth'
 pkglibexecdir = get_option('libexecdir') / 'bluetooth'
 meshstoragedir = storagedir / 'mesh'
 
-fs = import('fs')
 service_conf = configuration_data()
 if not fs.is_absolute(pkglibexecdir)
   pkglibexecdir = get_option('prefix') / pkglibexecdir
@@ -327,3 +331,11 @@ endif
 
 summary({'Integration tests': has_pythonmodules},
   section: 'General')
+
+summary({'datadir': datadir,
+        'storagedir': storagedir,
+        'configdir': configdir,
+        'pkglibdir': pkglibdir,
+        'pkglibexecdir': pkglibexecdir,
+        'meshstoragedir': meshstoragedir,
+        }, section: 'Directories')
