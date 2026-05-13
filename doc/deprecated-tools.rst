@@ -8,7 +8,6 @@ Deprecated Tools
    hciattach
    hciconfig
    hcitool
-   hcidump
    rfcomm
    sdptool
    ciptool
