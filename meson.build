@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 project(
   'bluez', 'c',
-  version: '5.86',
+  version: '5.87',
   license: 'LGPL-2.1-or-later AND GPL-2.0-or-later',
   meson_version: '>= 1.3.0'
 )
