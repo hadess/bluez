@@ -13,7 +13,8 @@ if get_option('client').enabled()
       'mgmt.c',
       'assistant.c',
       'hci.c',
-      'telephony.c'
+      'telephony.c',
+      'cs.c'
       ],
     dependencies: [
       libbluetooth_internal_dep,

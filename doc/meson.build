@@ -9,6 +9,7 @@ man_pages = [
   'org.bluez.Adapter.5',
   'org.bluez.Bearer.LE.5',
   'org.bluez.Bearer.BREDR.5',
+  'org.bluez.ChannelSounding1.5',
   'org.bluez.Device.5',
   'org.bluez.DeviceSet.5',
   'org.bluez.AgentManager.5',
@@ -126,7 +127,8 @@ client_man_pages = [
   'bluetoothctl-transport.1',
   'bluetoothctl-assistant.1',
   'bluetoothctl-hci.1',
-  'bluetoothctl-telephony.1'
+  'bluetoothctl-telephony.1',
+  'bluetoothctl-cs.1'
 ]
 doc_man_pages += client_man_pages
 
