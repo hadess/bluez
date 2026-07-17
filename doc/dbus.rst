@@ -15,6 +15,7 @@ D-Bus APIs
    org.bluez.BatteryProviderManager
    org.bluez.Bearer.BREDR
    org.bluez.Bearer.LE
+   org.bluez.ChannelSounding1
    org.bluez.LEAdvertisingManager
    org.bluez.LEAdvertisement
    org.bluez.AdvertisementMonitorManager
@@ -50,6 +51,7 @@ D-Bus APIs
 * :doc:`org.bluez.BatteryProviderManager <org.bluez.BatteryProviderManager>`
 * :doc:`org.bluez.Bearer.BREDR <org.bluez.Bearer.BREDR>`
 * :doc:`org.bluez.Bearer.LE <org.bluez.Bearer.LE>`
+* :doc:`org.bluez.ChannelSounding1 <org.bluez.ChannelSounding1>`
 * :doc:`org.bluez.LEAdvertisingManager <org.bluez.LEAdvertisingManager>`
 * :doc:`org.bluez.LEAdvertisement <org.bluez.LEAdvertisement>`
 * :doc:`org.bluez.AdvertisementMonitorManager <org.bluez.AdvertisementMonitorManager>`
