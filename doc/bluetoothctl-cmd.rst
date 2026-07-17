@@ -18,6 +18,7 @@ bluetoothctl
    bluetoothctl-assistant
    bluetoothctl-hci
    bluetoothctl-telephony
+   bluetoothctl-cs
 
 * :doc:`bluetoothctl <bluetoothctl>`
 * :doc:`bluetoothctl-mgmt <bluetoothctl-mgmt>`
@@ -32,3 +33,4 @@ bluetoothctl
 * :doc:`bluetoothctl-assistant <bluetoothctl-assistant>`
 * :doc:`bluetoothctl-hci <bluetoothctl-hci>`
 * :doc:`bluetoothctl-telephony <bluetoothctl-telephony>`
+* :doc:`bluetoothctl-cs <bluetoothctl-cs>`
