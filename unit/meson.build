@@ -4,6 +4,7 @@ tests1 = [
   [ 'test-uuid.c' ],
   [ 'test-eir.c', '../src/eir.c', '../src/uuid-helper.c' ],
   [ 'test-sdp.c', '../src/sdpd-database.c', '../src/log.c', '../src/sdpd-service.c', '../src/sdpd-request.c' ],
+  [ 'test-sdp-xml.c', '../src/sdp-xml.c', '../src/log.c' ],
   [ 'test-avrcp.c', '../src/log.c', 'avctp.c', 'avrcp-lib.c' ],
   [ 'test-lib.c' ],
   [ 'test-gatt.c' ],
@@ -33,6 +34,7 @@ foreach t: tests1
   exe = executable(test_name,
     sources: t,
     dependencies: [ libshared_glib_dep, libbluetooth_internal_dep ],
+    c_args: [ '-DTOP_SRCDIR="@0@"'.format(meson.global_source_root()) ]
   )
   test(test_name, exe)
 endforeach
