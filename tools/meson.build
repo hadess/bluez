@@ -228,7 +228,7 @@ if get_option('tools').allowed()
       )
     endif
     executable('sdptool',
-      sources: [ 'sdptool.c', '../src/sdp-xml.c' ],
+      sources: [ 'sdptool.c', '../src/sdp-xml.c', '../src/shared/queue.c', '../src/shared/util.c' ],
       dependencies: [ libbluetooth_internal_dep, glib_dep ],
       install: true
     )
