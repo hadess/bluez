@@ -231,7 +231,6 @@ if get_option('documentation').enabled()
     'dev-maint.rst',
     'test-runner.rst',
     'assigned-numbers.rst',
-    'security-bugs.rst',
     'coding-style.rst',
     'maintainer-guidelines.rst',
     'protocols.rst',
