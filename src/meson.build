@@ -59,7 +59,8 @@ if get_option('daemon').allowed()
     'adv_monitor.c',
     'battery.c',
     'settings.c',
-    'set.c'
+    'set.c',
+    'ranging.c'
   )
 
   executable('bluetoothd',
