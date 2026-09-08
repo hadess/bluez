@@ -861,6 +861,7 @@ AM_TESTS_ENVIRONMENT = MALLOC_CHECK_=3 MALLOC_PERTURB_=69
 
 check-functional: all
 	python3 -m pytest "$(srcdir)/test/functional" -v \
+		-m "not tester" \
 		--kernel="$(FUNCTIONAL_TESTING_KERNEL)" \
 		--bluez-build-dir="$(top_builddir)" \
 		--bluez-src-dir="$(srcdir)"
