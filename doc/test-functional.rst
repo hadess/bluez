@@ -32,6 +32,50 @@ Or, if you already have a kernel image:
 
    $ test/test-functional --kernel /pathto/bzImage -v
 
+MAKE TARGETS
+============
+
+``make check``
+	Runs the unit tests (``TESTS``). If the tree was configured with
+	``--enable-functional-testing``, it also runs ``check-functional``.
+
+``make check-functional``
+	Runs the functional test suite in ``test/functional`` via Pytest,
+	using the configured build and source directories, and the kernel
+	image from the ``FUNCTIONAL_TESTING_KERNEL`` variable.
+
+	The variable can be overridden on the command line:
+
+	.. code-block::
+
+		$ make check-functional FUNCTIONAL_TESTING_KERNEL=/pathto/bzImage
+
+	Tests marked ``tester`` (the kernel testers, see
+	`test/functional/test_kernel_testers.py`) are excluded, as they
+	test the kernel rather than userspace and should not gate a BlueZ
+	release. They can still be run manually:
+
+	.. code-block::
+
+		$ test/test-functional -m tester --kernel=/pathto/bzImage
+
+CONFIGURE OPTIONS
+=================
+
+``--enable-functional-testing[=<image>]``
+	Enables the functional testing tools. It requires
+	``--enable-client``, ``--enable-tools`` and ``--enable-testing``,
+	and that the Python dependencies from
+	``test/functional/requirements.txt`` are installed.
+
+	The optional argument is the kernel image (or built Linux source
+	tree root) used by ``make check-functional``, i.e. it sets the
+	default value of ``FUNCTIONAL_TESTING_KERNEL``:
+
+	.. code-block::
+
+		$ ./bootstrap-configure --enable-functional-testing=/pathto/bzImage
+
 OPTIONS
 =======
 
