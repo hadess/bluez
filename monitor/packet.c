@@ -2901,15 +2901,17 @@ static const struct bitfield_data features_le_0[] = {
 };
 
 static const struct bitfield_data features_le_1[] = {
-	{ 0, "Monitoring Advertisers"				},
-	{ 1, "Frame Space Update"				},
-	{ 2, "UTP OTA Mode"					},
-	{ 3, "UTP HCI Pairing"					},
-	{ 4, "LL_OTA_UTP_IND maximum length"			},
-	{ 5, "LL_OTA_UTP_IND maximum length"			},
-	{ 8, "Shorter Connection Intervals"			},
-	{ 9, "Shorter Connection Intervals (Host Support)"	},
+	{  0, "Monitoring Advertisers"				},
+	{  1, "Frame Space Update"				},
+	{  2, "UTP OTA Mode"					},
+	{  3, "UTP HCI Pairing"					},
+	{  4, "LL_OTA_UTP_IND maximum length"			},
+	{  5, "LL_OTA_UTP_IND maximum length"			},
+	{  8, "Shorter Connection Intervals"			},
+	{  9, "Shorter Connection Intervals (Host Support)"	},
 	{ 10, "LE Flushable ACL Data"				},
+	{ 11, "Channel Sounding Enhancement #1"			},
+	{ }
 };
 
 static const struct bitfield_data features_msft[] = {
