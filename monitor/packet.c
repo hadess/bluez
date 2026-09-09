@@ -3139,9 +3139,9 @@ static void print_le_states(const uint8_t *states_array)
 		}
 
 		if (num > 0) {
-			print_field("  %s", str[0]);
+			print_field("  Bit %-2u %s", i, str[0]);
 			for (n = 1; n < num; n++)
-				print_field("    and %s", str[n]);
+				print_field("         and %s", str[n]);
 		}
 
 		mask &= ~val;
