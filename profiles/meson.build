@@ -35,7 +35,8 @@ if get_option('avrcp').allowed()
     'audio/control.c',
     'audio/avctp.c',
     'audio/avctp.c',
-    'audio/avrcp.c'
+    'audio/avrcp.c',
+    'audio/avrcp-parse.c'
   )
 endif
 

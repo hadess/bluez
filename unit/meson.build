@@ -5,7 +5,7 @@ tests1 = [
   [ 'test-eir.c', '../src/eir.c', '../src/uuid-helper.c' ],
   [ 'test-sdp.c', '../src/sdpd-database.c', '../src/log.c', '../src/sdpd-service.c', '../src/sdpd-request.c' ],
   [ 'test-sdp-xml.c', '../src/sdp-xml.c', '../src/log.c' ],
-  [ 'test-avrcp.c', '../src/log.c', 'avctp.c', 'avrcp-lib.c' ],
+  [ 'test-avrcp.c', '../src/log.c', 'avctp.c', 'avrcp-lib.c', '../profiles/audio/avrcp-parse.c' ],
   [ 'test-lib.c' ],
   [ 'test-gatt.c' ],
   [ 'test-micp.c' ],
