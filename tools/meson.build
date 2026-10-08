@@ -201,11 +201,6 @@ if get_option('tools').allowed()
   endif
 
   if get_option('deprecated').allowed()
-    executable('gatttool',
-      sources: gatttool_sources,
-      dependencies: [ libbluetooth_internal_dep, libshared_glib_dep, readline_dep ],
-      install: true
-    )
     executable('hciattach',
       sources: [
         'hciattach.c',
