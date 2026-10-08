@@ -18,6 +18,7 @@ shared_sources = [
   'gatt-server.c',
   'gatt-db.c',
   'gap.c',
+  'hog.c',
   'log.c',
   'bap.c',
   'bap-debug.c',

@@ -18,10 +18,6 @@ tests1 = [
   [ 'test-mcp.c' ],
   [ 'test-hog.c',
     btio_sources,
-    '../profiles/input/hog-lib.c',
-    '../profiles/scanparam/scpp.c',
-    '../profiles/battery/bas.c',
-    '../profiles/deviceinfo/dis.c',
     '../src/log.c',
   ],
 ]

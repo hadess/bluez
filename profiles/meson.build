@@ -70,10 +70,6 @@ if get_option('hog').allowed()
   builtin_modules += 'hog'
   builtin_sources += files(
     'input/hog.c',
-    'input/hog-lib.c',
-    'deviceinfo/dis.c',
-    'battery/bas.c',
-    'scanparam/scpp.c',
     'input/suspend-none.c'
   )
 endif
