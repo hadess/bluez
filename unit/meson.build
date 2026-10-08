@@ -23,9 +23,6 @@ tests1 = [
     '../profiles/battery/bas.c',
     '../profiles/deviceinfo/dis.c',
     '../src/log.c',
-    '../attrib/att.c',
-    '../attrib/gatt.c',
-    '../attrib/gattrib.c'
   ],
 ]
 
@@ -125,14 +122,8 @@ else
   test('test-gdbus-client', exe)
 endif
 
-exe = executable('test-gattrib',
-  sources: [ 'test-gattrib.c', '../attrib/gattrib.c', btio_sources, '../src/log.c' ],
-  dependencies: [ libshared_glib_dep, libbluetooth_internal_dep ]
-)
-test('test-gattrib', exe)
-
 exe = executable('test-profile',
-  sources: [ 'test-profile.c', 'btd.c', bluetoothd_internal_sources, attrib_sources, btio_sources ],
+  sources: [ 'test-profile.c', 'btd.c', bluetoothd_internal_sources, btio_sources ],
   c_args: [ '-DSTORAGEDIR="@0"'.format(storagedir) ],
   dependencies: [
     libgdbus_internal_dep,

@@ -67,7 +67,6 @@ if get_option('daemon').allowed()
     sources: [
       builtin_sources,
       builtin_h,
-      attrib_sources,
       btio_sources,
       bluetoothd_internal_sources,
       'main.c',

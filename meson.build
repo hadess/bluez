@@ -284,7 +284,6 @@ subdir('lib')
 if not get_option('tools').disabled() or get_option('client').enabled() or get_option('obex').enabled() or not get_option('tests').disabled() or not get_option('daemon').disabled()
   subdir('gdbus')
 endif
-subdir('attrib')
 subdir('btio')
 subdir('plugins')
 if get_option('daemon').enabled()
