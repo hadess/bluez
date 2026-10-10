@@ -25,6 +25,7 @@ executable('btmon',
     'msft.c',
     'jlink.c',
     'att.c',
+    'find.c',
     '../src/log.c',
     '../src/textfile.c',
     '../src/settings.c'

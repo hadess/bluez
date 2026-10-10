@@ -44,6 +44,7 @@ obexd_builtin_sources = [
   'plugins/irmc.c',
   'plugins/pbap.c',
   'plugins/vcard.c',
+  'plugins/phonebook.c',
   'plugins/phonebook-@0@.c'.format(get_option('phonebook')),
   'plugins/mas.c',
   'plugins/messages-dummy.c',
