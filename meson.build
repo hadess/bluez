@@ -264,6 +264,7 @@ config_h.set('HAVE_A2DP', get_option('a2dp').allowed())
 config_h.set('HAVE_AVRCP', get_option('avrcp').allowed())
 config_h.set('HAVE_ASHA', get_option('asha').allowed())
 config_h.set('HAVE_VCP', get_option('vcp').allowed())
+config_h.set('HAVE_HFP', get_option('hfp').allowed())
 config_h.set10('EXTERNAL_PLUGINS', get_option('external-plugins').enabled())
 config_h.set_quoted('VERSION', meson.project_version())
 

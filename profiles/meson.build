@@ -8,6 +8,7 @@ builtin_modules += [
 
 builtin_sources += files(
   'audio/media.c',
+  'audio/hfp-hf.c',
   'audio/transport.c',
   'audio/player.c',
   'audio/avrcp-player.c',
