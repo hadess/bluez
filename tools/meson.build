@@ -41,7 +41,7 @@ tester_tools = [
 if get_option('tests').allowed()
   foreach tool: tester_tools
     executable(tool + '-tester',
-      sources: [ tool + '-tester.c', emulator_sources ],
+      sources: [ tool + '-tester.c', 'tester-io.c', emulator_sources ],
       dependencies: [ libbluetooth_internal_dep, libshared_glib_dep, libgdbus_internal_dep, glib_dep ]
     )
   endforeach
