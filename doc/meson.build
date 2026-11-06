@@ -243,6 +243,8 @@ if get_option('documentation').enabled()
     'dbus-gatt.rst',
     'dbus-obex.rst',
     'qualifications.rst',
+    'virtio.rst',
+    'btvirt.rst',
   ]
   docs_sources += qualifications_docs
 
